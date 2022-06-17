@@ -9,8 +9,15 @@
     "test": "cypress run"
   },
   "dependencies": {
+    "@kyvg/vue3-notification": "^2.3.4",
+    "axios": "^0.27.2",
+    "feather-icons": "^4.29.0",
+    "mitt": "^3.0.0",
+    "vee-validate": "^4.5.11",
     "vue": "^3.2.36",
-    "vue-router": "^4.0.15"
+    "vue-axios": "^3.4.1",
+    "vue-router": "^4.0.15",
+    "yup": "^0.32.11"
   },
   "devDependencies": {
     "@vitejs/plugin-vue": "^2.3.3",
