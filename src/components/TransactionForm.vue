@@ -25,7 +25,6 @@
       </div>
       <button
           type="submit"
-          :disabled="processing || Object.keys(errors).length > 0"
           class="w-full p-1.5 flex justify-center items-center rounded-lg bg-green-500 text-white disabled:opacity-25"
           data-type="transaction-submit"
       >
@@ -37,15 +36,25 @@
 </template>
 
 <script>
+import { useTransactionStore } from '@/store/transaction'
 import { Field, Form as ValidatorForm, ErrorMessage } from 'vee-validate'
 import * as Yup from 'yup'
 
 export default {
+  setup () {
+    const transactionStore = useTransactionStore()
+    const { addTransaction, setCurrentAccount } = transactionStore
+    return {
+      transactionStore,
+      addTransaction,
+      setCurrentAccount
+    }
+  },
   name: 'Form',
   components: {
     Field,
     ValidatorForm,
-    ErrorMessage,
+    ErrorMessage
   },
   data: () => ({
     processing: false,
@@ -64,13 +73,16 @@ export default {
   methods: {
     create () {
       this.processing = true
+      this.transactionStore.$patch({ loading: true })
       this.axios.post('https://infra.devskills.app/api/accounting/transactions', this.form).then(({ data }) => {
+        this.setCurrentAccount(this.form.account_id)
         this.clearForm()
-        this.emitter.emit('add-transaction-item', data)
+        this.addTransaction(data)
         this.$notify({ position: 'top left', text: 'Transaction Created', type: 'success'})
       }).catch(this.$root.errorHandler).finally(() => {
         this.processing = false
-      });
+        this.transactionStore.$patch({ loading: false })
+      })
     },
     clearForm () {
       this.form.amount = null

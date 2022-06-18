@@ -36,7 +36,7 @@ export default {
     },
     isWithdraw () {
       return this.item.amount > 0 ? false : true
-    },
+    }
   }
 }
 </script>

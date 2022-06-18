@@ -20,7 +20,8 @@
 </template>
 
 <script>
-import Helpers from "@/mixins/helpers";
+import Helpers from '@/mixins/helpers'
+
 export default {
   name: 'App',
   data: () => ({
@@ -34,7 +35,9 @@ export default {
       })
     })
   },
-  mixins: [Helpers]
+  methods: {
+    ...Helpers
+  }
 }
 </script>
 
