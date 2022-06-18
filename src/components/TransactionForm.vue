@@ -28,7 +28,7 @@
           class="w-full p-1.5 flex justify-center items-center rounded-lg bg-green-500 text-white disabled:opacity-25"
           data-type="transaction-submit"
       >
-        <span v-if="processing">Processing...</span>
+        <spinner v-if="processing" :width="18" :height="18" />
         <span v-else>Submit</span>
       </button>
     </validator-form>
@@ -38,7 +38,6 @@
 <script>
 import { Field, Form as ValidatorForm, ErrorMessage } from 'vee-validate'
 import * as Yup from 'yup'
-import feather from "feather-icons";
 
 export default {
   name: 'Form',
@@ -59,11 +58,6 @@ export default {
     this.schema = Yup.object({
       account_id: Yup.string().required().uuid('Account ID must be a valid UUID').typeError('Account ID is required and must be uuid v4.'),
       amount: Yup.number().required().typeError('Amount is required and must be a valid number.')
-    })
-  },
-  mounted () {
-    this.$nextTick(() => {
-      feather.replace()
     })
   },
   methods: {

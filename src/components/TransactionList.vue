@@ -1,7 +1,7 @@
 <template>
   <div class="bg-white rounded-lg p-6 shadow-lg">
     <div v-if="loading" class="w-full h-full flex justify-center items-center">
-      <i data-feather="loader" class="spinner"></i>
+      <spinner />
     </div>
     <div v-else-if="!items.length" class="w-full h-full flex justify-center items-center">
       <p>No Transaction Recorded</p>
@@ -9,7 +9,9 @@
     <div v-else>
       <div v-for="(item, i) in items" :key="item.transaction_id">
         <transaction-item :item="item" :balance="i === 0 ? balance : null" />
-        <p v-if="i === 0 && balance !== null" class="px-3.5 py-2">the current account Balance ${{ balance }}</p>
+        <p v-if="i === 0" class="px-3.5 py-2">
+          the current account Balance: <spinner class="inline-block" v-if="balance.loading" :width="18" :height="18" /><span v-else>{{ balance.value }}</span>
+        </p>
         <hr>
       </div>
     </div>
@@ -18,7 +20,6 @@
 
 <script>
 import TransactionItem from "@/components/TransactionItem.vue";
-import feather from "feather-icons";
 
 export default {
   name: 'TransactionList',
@@ -28,16 +29,16 @@ export default {
   data: () => ({
     loading: true,
     items: [],
-    balance: null
+    balance: {
+      loading: false,
+      value: 0
+    }
   }),
   created () {
     this.fetchItems()
   },
   mounted () {
     this.emitter.on('add-transaction-item', this.addItem)
-    this.$nextTick(() => {
-      feather.replace()
-    })
   },
   watch: {
     items: {
@@ -62,9 +63,12 @@ export default {
       this.items.unshift(item)
     },
     setBalance (accountId) {
+      this.balance.loading = true
       this.axios.get(`https://infra.devskills.app/api/accounting/accounts/${accountId}`).then(({ data }) => {
-        this.balance = data.balance
-      }).catch(this.$root.errorHandler)
+        this.balance.value = data.balance
+      }).catch(this.$root.errorHandler).finally(() => {
+        this.balance.loading = false
+      })
     }
   }
 }
