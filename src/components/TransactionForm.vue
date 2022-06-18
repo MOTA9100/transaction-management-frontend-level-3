@@ -1,6 +1,6 @@
 <template>
   <div class="bg-white rounded-lg p-6 shadow-lg">
-    <validator-form v-slot="{ errors }" ref="validatorForm" :validation-schema="schema" @submit="create">
+    <validator-form ref="validatorForm" :validation-schema="schema" @submit="create">
       <div class="mb-4">
         <field
             v-model="form.account_id"

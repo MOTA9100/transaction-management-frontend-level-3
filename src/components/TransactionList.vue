@@ -8,9 +8,9 @@
     </div>
     <div v-else>
       <div v-for="(item, i) in items" :key="item.transaction_id">
-        <transaction-item :item="item" :balance="i === 0 ? balance : null" />
-        <p v-if="i === 0" class="px-3.5 py-2">
-          the current account Balance: <spinner class="inline-block" v-if="balance.loading" :width="18" :height="18" /><span v-else>{{ balance.value }}</span>
+        <transaction-item :item="item" :balance="i === 0 ? currentBalance : null" />
+        <p v-if="i === 0 && currentBalance" class="px-3.5 py-2">
+          the current account Balance: ${{ currentBalance }}
         </p>
         <hr>
       </div>
@@ -29,11 +29,14 @@ export default {
   data: () => ({
     loading: true,
     items: [],
-    balance: {
-      loading: false,
-      value: 0
-    }
+    balances: {},
+    currentAccount: null
   }),
+  computed: {
+    currentBalance () {
+      return this.currentAccount && this.balances[this.currentAccount] ? this.balances[this.currentAccount] : null
+    }
+  },
   created () {
     this.fetchItems()
   },
@@ -43,8 +46,9 @@ export default {
   watch: {
     items: {
       deep: true,
-      handler(value) {
-        this.setBalance(value[0].account_id)
+      handler (value) {
+        this.addBalance(value[0].account_id, value[0].amount)
+        this.currentAccount = value[0].account_id
       }
     }
   },
@@ -62,13 +66,8 @@ export default {
     addItem (item) {
       this.items.unshift(item)
     },
-    setBalance (accountId) {
-      this.balance.loading = true
-      this.axios.get(`https://infra.devskills.app/api/accounting/accounts/${accountId}`).then(({ data }) => {
-        this.balance.value = data.balance
-      }).catch(this.$root.errorHandler).finally(() => {
-        this.balance.loading = false
-      })
+    addBalance (accountId, amount) {
+      this.balances[accountId] = parseInt((this.balances[accountId] || 0)) + parseInt(amount)
     }
   }
 }
