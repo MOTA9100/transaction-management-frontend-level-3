@@ -25,6 +25,7 @@
       </div>
       <button
           type="submit"
+          :disabled="processing || Object.keys(errors).length > 0"
           class="w-full p-1.5 flex justify-center items-center rounded-lg bg-green-500 text-white disabled:opacity-25"
           data-type="transaction-submit"
       >

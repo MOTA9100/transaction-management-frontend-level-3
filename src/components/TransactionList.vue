@@ -10,7 +10,7 @@
       <div v-for="(item, i) in items" :key="item.transaction_id">
         <transaction-item :item="item" :balance="i === 0 ? balance : null" />
         <p v-if="i === 0" class="px-3.5 py-2">
-          the current account Balance: <spinner class="inline-block" v-if="balance.loading" :width="18" :height="18" /><span v-else>{{ balance.value }}</span>
+          the current account Balance: <spinner class="inline-block" v-if="balance.loading" :width="18" :height="18" /><span v-else>${{ balance.value }}</span>
         </p>
         <hr>
       </div>
